@@ -6,3 +6,4 @@
 
 ## Maintainer 
     - sumin.yang (ysm0482@naver.com)
+    - sumin.youn (sumin97y@gmail.com)
