@@ -2,7 +2,8 @@
 ## 실습 내용 
     - SK Networks FastAPI 실습
     - BE : FastAPI
-    - DB : PostgreSQL
+    - DB : PostgreSQL16
 
 ## Maintainer 
     - sumin.yang (ysm0482@naver.com)
+    - sumin.youn (sumin97y@gmail.com)
