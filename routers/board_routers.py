@@ -55,3 +55,32 @@ def create_board_item(data:BoardItemSchema):
     cursor.close()
     conn.close()
     return res
+
+@router.put("/board_items/{item_id}", status_code=200)
+def update_board_item(item_id:str, data:BoardItemSchema):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    board_item_id = item_id
+    board_item_title = data.board_item_title
+    board_item_contents = data.board_item_contents
+    board_item_creater = data.board_item_creater
+
+    cursor.execute(
+        """
+            UPDATE board_items SET
+                board_item_title=%s ,
+                board_item_contents=%s , 
+                board_item_creater=%s
+            WHERE board_item_id=%s
+            RETURNING *
+        """,
+        (board_item_title, board_item_contents, board_item_creater, board_item_id)
+    )
+    updated_item = cursor.fetchone()
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return updated_item
