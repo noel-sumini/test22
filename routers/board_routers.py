@@ -2,6 +2,8 @@ from fastapi import APIRouter
 from schemas.board_schemas import BoardItemSchema
 from utils.db.postgres import get_db_connection
 from uuid import uuid4
+from fastapi import HTTPException
+
 
 router = APIRouter(prefix="/board")
 
@@ -24,7 +26,10 @@ def get_board_item(item_id:str):
     cursor.close()
     conn.close()
 
-    return item
+    if not item:
+        raise HTTPException(status_code=404, detail= "Item Not Found")
+    else:
+        return item
 
 
 @router.post("/create_board", status_code=200)
@@ -83,4 +88,31 @@ def update_board_item(item_id:str, data:BoardItemSchema):
     cursor.close()
     conn.close()
 
-    return updated_item
+    if not updated_item:
+        raise HTTPException(status_code=404, detail= "Item Not Found")
+    else:
+        return updated_item
+
+
+@router.delete("/board_items/{item_id}", status_code=200)
+def delete_board_item(item_id:str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+            DELETE FROM board_items 
+            WHERE board_item_id=%s
+            RETURNING board_item_id
+        """,
+        (item_id,)
+    )
+    deleted_item = cursor.fetchone()
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    if not deleted_item:
+        raise HTTPException(status_code=404, detail= "Item Not Found")
+    else:
+        return {"message": f"Item ID : {item_id} successfully deleted"}
